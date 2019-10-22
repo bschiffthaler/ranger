@@ -17,6 +17,8 @@
 #include <numeric>
 #include <random>
 #include <algorithm>
+#include <string>
+#include <armadillo>
 
 #include "globals.h"
 
@@ -196,6 +198,33 @@ public:
     order_snps = true;
   }
   // #nocov end
+
+void load_seidr(const std::vector<std::string>& dependent_variable_name,
+                  const arma::mat& gm_x,
+                  const arma::mat& gm_y,
+                  const std::vector<std::string>& var) {
+    num_rows = gm_x.n_rows;
+    externalData = false;
+    variable_names = var;
+    num_cols = var.size();
+    num_cols_no_snp = num_cols;
+    reserveMemory(1);
+    bool error = false;
+    for (arma::uword i = 0; i < gm_x.n_rows; i++)
+    {
+      for (arma::uword j = 0; j < gm_x.n_cols; j++)
+      {
+        set_x(j, i, gm_x(i, j), error);
+      }
+    }
+    for (arma::uword i = 0; i < gm_y.n_rows; i++)
+    {
+      for (arma::uword j = 0; j < gm_y.n_cols; j++)
+      {
+        set_y(j, i, gm_y(i, j), error);
+      }
+    }
+  }
 
 protected:
   std::vector<std::string> variable_names;
